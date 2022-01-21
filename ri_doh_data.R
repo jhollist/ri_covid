@@ -32,7 +32,9 @@ variable_lab <- c("cases" = "Daily Cases",
                   "three_day_avg_hospitalized" = "3-day Avg. Hospitalized",
                   "three_day_avg_positivity" = "3-day Avg. Positivity")
 
-ri_plots <- ggplot(ri_covid_data, aes(x = date, y = value)) +
+ri_plots <- ri_covid_data |>
+  filter(variable != "cases") |>
+  ggplot(aes(x = date, y = value)) +
   geom_line(size = 1, aes(color = variable)) +
   facet_grid(variable ~ ., scales = "free", 
              labeller = labeller(variable = variable_lab)) +
