@@ -42,4 +42,7 @@ ri_plots <- ggplot(ri_covid_data, aes(x = date, y = value)) +
   theme(legend.position = "none") +
   scale_color_manual(values = c("darksalmon","darkred","darkblue","grey50","black"))
 ggsave("ri_plot.jpg", ri_plots, width = 11, height = 8.5)
-ggplotly(ri_plots) 
+index <- ggplotly(ri_plots) 
+htmlwidgets::saveWidget(index, 
+                        here::here("index.html"), 
+                        selfcontained = FALSE)
