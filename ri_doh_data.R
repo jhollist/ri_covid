@@ -57,7 +57,7 @@ ri_plots <- ri_covid_data |>
                                           max(ri_covid_data$date), ")")) +
   theme_ipsum_rc() +
   theme(legend.position = "none") +
-  scale_color_manual(values = c("darksalmon","darkred","darkblue","grey50","black"))
+  scale_color_manual(values = c("grey30","darkred","darkblue"))
 ggsave("ri_plot.jpg", ri_plots, width = 11, height = 8.5)
 index <- ggplotly(ri_plots) 
 htmlwidgets::saveWidget(index, 
