@@ -14,27 +14,42 @@ ri_covid_data <- select(ri_doh_data, date = Date,
                         deaths = 'Date of death',
                         hospitalized = 'Currently hospitalized') %>%
   mutate(positivity = (cases/tests) * 100, 
-         three_day_avg_cases = zoo::rollapply(.data$cases, 3, mean, fill = NA),
-         three_day_avg_deaths = 
-           zoo::rollapply(.data$deaths, 3, mean, fill = NA),
-         three_day_avg_hospitalized = 
-           zoo::rollapply(.data$hospitalized, 3, mean, fill = NA),
-         three_day_avg_positivity = 
-           zoo::rollapply(.data$positivity, 3, mean, fill = NA)) %>%
-  select(date, cases, starts_with("three")) %>%
-  pivot_longer(cols = cases:three_day_avg_positivity, 
+         seven_day_avg_cases = zoo::rollapply(.data$cases, 7, mean, 
+                                              fill = "right", align = "right"),
+         seven_day_avg_deaths = 
+           zoo::rollapply(.data$deaths, 7, mean, fill = "right", 
+                          align = "right"),
+         seven_day_avg_hospitalized = 
+           zoo::rollapply(.data$hospitalized, 7, mean, fill = "right", 
+                          align = "right"),
+         seven_day_avg_positivity = 
+           zoo::rollapply(.data$positivity, 7, mean, fill = "right", 
+                          align = "right")) %>%
+  select(date, cases, deaths, positivity, starts_with("seven")) %>%
+  pivot_longer(cols = cases:seven_day_avg_positivity, 
                names_to = "variable",
                values_to = "value")
 
 variable_lab <- c("cases" = "Daily Cases",
-                  "three_day_avg_cases" = "3-Day Avg. Cases", 
-                  "three_day_avg_deaths" = "3-Day Avg. Deaths",
-                  "three_day_avg_hospitalized" = "3-day Avg. Hospitalized",
-                  "three_day_avg_positivity" = "3-day Avg. Positivity")
+                  "seven_day_avg_cases" = "7-Day Avg. Cases", 
+                  "seven_day_avg_deaths" = "7-Day Avg. Deaths",
+                  "seven_day_avg_hospitalized" = "7-day Avg. Hospitalized",
+                  "seven_day_avg_positivity" = "7-day Avg. Positivity")
+
+ri_daily <- ri_covid_data %>%
+  filter(variable %in% c("cases", "deaths", "positivity")) %>%
+  mutate(variable = case_when(variable == "cases" ~
+                                "seven_day_avg_cases",
+                              variable == "deaths" ~
+                                "seven_day_avg_deaths",
+                              variable == "positivity" ~
+                                "seven_day_avg_positivity"
+                              ))
 
 ri_plots <- ri_covid_data |>
-  filter(variable != "three_day_avg_hospitalized") |>
+  filter(!variable %in% c("seven_day_avg_hospitalized", "cases", "deaths", "positivity")) |>
   ggplot(aes(x = date, y = value)) +
+  geom_point(data = ri_daily, aes(x=date, y=value), size = 1, color = "grey70") +
   geom_line(size = 1, aes(color = variable)) +
   facet_grid(variable ~ ., scales = "free", 
              labeller = labeller(variable = variable_lab)) +
