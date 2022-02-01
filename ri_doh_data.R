@@ -63,3 +63,7 @@ index <- ggplotly(ri_plots)
 htmlwidgets::saveWidget(index, 
                         here::here("index.html"), 
                         selfcontained = FALSE)
+
+system("git add -A")
+system(paste0("git commit -m '", lubridate::today(), "update.'" ))
+system("git push origin main")
