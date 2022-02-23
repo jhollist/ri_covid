@@ -46,6 +46,10 @@ ri_daily <- ri_covid_data %>%
                                 "seven_day_avg_positivity"
                               ))
 
+ri_covid_data %>% filter(date >= lubridate::today() - 8, variable == "cases") %>% pull(value) -> cases_7day
+
+cases_7day_per100k <- round(100000*(cases_7day/1059000), 0)
+
 ri_plots <- ri_covid_data |>
   filter(!variable %in% c("seven_day_avg_hospitalized", "cases", "deaths", "positivity")) |>
   ggplot(aes(x = date, y = value)) +
@@ -54,7 +58,7 @@ ri_plots <- ri_covid_data |>
   facet_grid(variable ~ ., scales = "free", 
              labeller = labeller(variable = variable_lab)) +
   labs(x = "Date", y = "", title = paste0("Rhode Island COVID-19 (as of: ", 
-                                          max(ri_covid_data$date), ")")) +
+                                          max(ri_covid_data$date), ")"), subtitle = paste0("Cases per 100k in last 7 days: ", cases_7day_per100k)) +
   theme_ipsum_rc() +
   theme(legend.position = "none") +
   scale_color_manual(values = c("grey30","darkred","darkblue"))
