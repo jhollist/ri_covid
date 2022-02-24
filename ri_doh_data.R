@@ -46,9 +46,9 @@ ri_daily <- ri_covid_data %>%
                                 "seven_day_avg_positivity"
                               ))
 
-ri_covid_data %>% filter(date >= lubridate::today() - 8, variable == "cases") %>% pull(value) -> cases_7day
+ri_covid_data %>% filter(date >= lubridate::today() - 8, variable == "cases") %>% pull(value) %>% sum -> cases_7day
 
-cases_7day_per100k <- round(100000*(cases_7day/1059000), 0)
+cases_7day_per100k <- round(100000*(cases_7day/1095000), 0)
 
 ri_plots <- ri_covid_data |>
   filter(!variable %in% c("seven_day_avg_hospitalized", "cases", "deaths", "positivity")) |>
@@ -63,7 +63,13 @@ ri_plots <- ri_covid_data |>
   theme(legend.position = "none") +
   scale_color_manual(values = c("grey30","darkred","darkblue"))
 ggsave("ri_plot.jpg", ri_plots, width = 11, height = 8.5)
-index <- ggplotly(ri_plots) 
+index <- ggplotly(ri_plots)  %>%
+  layout(title = list(text = paste0("Rhode Island COVID-19 (as of: ", 
+                                    max(ri_covid_data$date), ")",
+                                    '<br>',
+                                    '<sup>',
+                                    paste0("Cases per 100k in last 7 days: ", 
+                                           cases_7day_per100k),'</sup>')))
 htmlwidgets::saveWidget(index, 
                         here::here("index.html"), 
                         selfcontained = FALSE)
