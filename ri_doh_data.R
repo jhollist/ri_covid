@@ -74,12 +74,14 @@ ri_daily <- ri_covid_data %>%
 cases_7day_per100k <- filter(ri_covid_data, date == max(date), 
                              variable == "cases_7day_per100k") %>% 
   pull(value) %>%
-  max()
+  max() %>%
+  round(0)
 
 index_7day <- filter(ri_covid_data, date >= max(lubridate::ymd(ri_covid_data$date)) - 6, 
                      variable == "risk_index") %>%
   pull(value) %>%
-  mean(na.rm = TRUE)
+  mean(na.rm = TRUE) %>%
+  round(0)
 
 
 ri_plots <- ri_covid_data |>
