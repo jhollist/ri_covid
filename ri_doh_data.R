@@ -102,7 +102,11 @@ index <- ggplotly(ri_plots)  %>%
                                     '<br>',
                                     '<sup>',
                                     paste0("Cases per 100k in last 7 days: ", 
-                                           cases_7day_per100k),'</sup>')))
+                                           cases_7day_per100k),'</sup>',
+                                    '<br>',
+                                    '<sup>',
+                                    paste0("Mean Risk Index in last 7 days: ", 
+                                           index_7day),'</sup>'))))
 htmlwidgets::saveWidget(index, 
                         here::here("index.html"), 
                         selfcontained = FALSE)
