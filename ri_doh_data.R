@@ -28,7 +28,7 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   mutate(positivity = (cases/tests) * 100, 
          risk_index = jwh_covid_risk_index(cases, deaths, hospitalization, 
                                            positivity) * 100,
-         risk_index = risk_index/max(risk_index, na.rm = TRUE),
+         risk_index = risk_index/max(risk_index, na.rm = TRUE) * 100,
          cases_7day_per100k = unlist(cases_7day_per100k),
          seven_day_avg_cases = zoo::rollapply(.data$cases, 7, mean, 
                                               fill = "right", align = "right"),
@@ -75,6 +75,12 @@ cases_7day_per100k <- filter(ri_covid_data, date == max(date),
                              variable == "cases_7day_per100k") %>% 
   pull(value) %>%
   max()
+
+index_7day <- filter(ri_covid_data, date >= max(lubridate::ymd(ri_covid_data$date)) - 6, 
+                     variable == "risk_index") %>%
+  pull(value) %>%
+  mean(na.rm = TRUE)
+
 
 ri_plots <- ri_covid_data |>
   filter(variable %in% c("seven_day_avg_cases", "seven_day_avg_deaths", "seven_day_avg_positivity",
