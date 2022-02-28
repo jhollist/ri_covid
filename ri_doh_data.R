@@ -6,14 +6,19 @@ library(hrbrthemes)
 library(plotly)
 
 jwh_covid_risk_index <- function(cases, deaths, hosp, pos){
-  case_prop <- cases/300#max(cases, na.rm = TRUE)
-  case_prop <- case_prop/max(case_prop, na.rm = TRUE)
-  death_prop <- deaths/10#max(deaths, na.rm = TRUE)
-  death_prop <- death_prop/max(death_prop, na.rm = TRUE)
-  hosp_prop <- hosp/50#max(hosp, na.rm = TRUE)
-  hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
-  pos_prop <- pos/5#max(pos, na.rm = TRUE)
-  pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
+  #case_prop <- cases/300#max(cases, na.rm = TRUE)
+  #case_prop <- case_prop/max(case_prop, na.rm = TRUE)
+  #death_prop <- deaths/10#max(deaths, na.rm = TRUE)
+  #death_prop <- death_prop/max(death_prop, na.rm = TRUE)
+  #hosp_prop <- hosp/50#max(hosp, na.rm = TRUE)
+  #hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
+  #pos_prop <- pos/5#max(pos, na.rm = TRUE)
+  #pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
+  case_prop <- cases
+  death_prop <- deaths
+  hosp_prop <- hosp
+  pos_prop <- pos
+  
   idx <- (case_prop + death_prop + hosp_prop + pos_prop)/4 
   idx
 }
@@ -33,7 +38,7 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   mutate(positivity = (cases/tests) * 100, 
          risk_index = jwh_covid_risk_index(cases, deaths, hospitalization, 
                                            positivity) * 100,
-         risk_index = risk_index/max(risk_index, na.rm = TRUE) * 100,
+         #risk_index = risk_index/max(risk_index, na.rm = TRUE) * 100,
          cases_7day_per100k = unlist(cases_7day_per100k),
          seven_day_avg_cases = zoo::rollapply(.data$cases, 7, mean, 
                                               fill = "right", align = "right"),
