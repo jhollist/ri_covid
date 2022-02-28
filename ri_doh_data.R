@@ -7,14 +7,15 @@ library(plotly)
 
 jwh_covid_risk_index <- function(cases, deaths, hosp, pos){
   case_prop <- cases/300#max(cases, na.rm = TRUE)
-  case_prop <- case_prop/max(case_prop)
+  case_prop <- case_prop/max(case_prop, na.rm = TRUE)
   death_prop <- deaths/10#max(deaths, na.rm = TRUE)
-  death_prop <- death_prop/max(death_prop)
+  death_prop <- death_prop/max(death_prop, na.rm = TRUE)
   hosp_prop <- hosp/50#max(hosp, na.rm = TRUE)
-  hosp_prop <- hosp_prop/max(hosp_prop)
+  hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
   pos_prop <- pos/5#max(pos, na.rm = TRUE)
-  pos_prop <- pos_prop/max(pos_prop)
-  (case_prop + death_prop + hosp_prop + pos_prop)/4 
+  pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
+  idx <- (case_prop + death_prop + hosp_prop + pos_prop)/4 
+  idx
 }
 
 gs4_deauth()
