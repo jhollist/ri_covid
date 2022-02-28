@@ -6,10 +6,14 @@ library(hrbrthemes)
 library(plotly)
 
 jwh_covid_risk_index <- function(cases, deaths, hosp, pos){
-  case_prop <- cases/max(cases, na.rm = TRUE)
-  death_prop <- deaths/max(deaths, na.rm = TRUE)
-  hosp_prop <- hosp/max(hosp, na.rm = TRUE)
-  pos_prop <- pos/max(pos, na.rm = TRUE)
+  case_prop <- cases/300#max(cases, na.rm = TRUE)
+  case_prop <- case_prop/max(case_prop)
+  death_prop <- deaths/10#max(deaths, na.rm = TRUE)
+  death_prop <- death_prop/max(death_prop)
+  hosp_prop <- hosp/50#max(hosp, na.rm = TRUE)
+  hosp_prop <- hosp_prop/max(hosp_prop)
+  pos_prop <- pos/5#max(pos, na.rm = TRUE)
+  pos_prop <- pos_prop/max(pos_prop)
   (case_prop + death_prop + hosp_prop + pos_prop)/4 
 }
 
@@ -47,7 +51,10 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   #select(date, cases, deaths, positivity, starts_with("seven")) %>%
   pivot_longer(cols = cases:seven_day_avg_positivity, 
                names_to = "variable",
-               values_to = "value")
+               values_to = "value") %>%
+  mutate(value = case_when(is.nan(value) | is.na(value) ~
+                             0, 
+                           TRUE ~ value))
 
 variable_lab <- c("cases" = "Daily Cases",
                   "seven_day_avg_cases" = "7-Day Avg. Cases", 
@@ -79,6 +86,7 @@ cases_7day_per100k <- filter(ri_covid_data, date == max(date),
 
 index_7day <- filter(ri_covid_data, date >= max(lubridate::ymd(ri_covid_data$date)) - 6, 
                      variable == "risk_index") %>%
+  filter(value > 0) %>%
   pull(value) %>%
   mean(na.rm = TRUE) %>%
   round(0)
@@ -88,7 +96,7 @@ ri_plots <- ri_covid_data |>
   filter(variable %in% c("seven_day_avg_cases", "seven_day_avg_deaths", "seven_day_avg_positivity",
                          "seven_day_avg_hospitalization", "seven_day_avg_index")) |>
   ggplot(aes(x = date, y = value)) +
-  #geom_point(data = ri_daily, aes(x = date, y = value), size = 1, color = "grey70") +
+  geom_point(data = ri_daily, aes(x = date, y = value), size = 1, color = "grey70") +
   geom_line(size = 1, aes(color = variable)) +
   facet_grid(variable ~ ., scales = "free", 
              labeller = labeller(variable = variable_lab)) +
