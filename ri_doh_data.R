@@ -53,10 +53,7 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   #select(date, cases, deaths, positivity, starts_with("seven")) %>%
   pivot_longer(cols = cases:seven_day_avg_positivity, 
                names_to = "variable",
-               values_to = "value") %>%
-  mutate(value = case_when(is.nan(value) | is.na(value) ~
-                             0, 
-                           TRUE ~ value))
+               values_to = "value") 
 
 variable_lab <- c("cases" = "Daily Cases",
                   "seven_day_avg_cases" = "7-Day Avg. Cases", 
