@@ -19,6 +19,8 @@ jwh_covid_risk_index <- function(cases, deaths, hosp, pos){
   idx
 }
 
+#wastewater: https://github.com/biobotanalytics/covid19-wastewater-data
+
 gs4_deauth()
 ri_doh_data <- read_sheet("https://docs.google.com/spreadsheets/d/1c2QrNMz8pIbYEKzMJL7Uh2dtThOJa2j1sSMwiDo5Gz4", "Trends", na = c("", "NA", "--"))
 
