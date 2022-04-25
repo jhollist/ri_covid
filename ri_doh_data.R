@@ -5,15 +5,15 @@ library(tidyr)
 library(hrbrthemes)
 library(plotly)
 
-jwh_covid_risk_index <- function(cases, deaths, hosp, pos){
+jwh_covid_risk_index <- function(cases, deaths, hosp){
   case_prop <- cases/max(cases, na.rm = TRUE)
   case_prop <- case_prop/max(case_prop, na.rm = TRUE)
   death_prop <- deaths/max(deaths, na.rm = TRUE)
   death_prop <- death_prop/max(death_prop, na.rm = TRUE)
   hosp_prop <- hosp/max(hosp, na.rm = TRUE)
   hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
-  pos_prop <- pos/max(pos, na.rm = TRUE)
-  pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
+  #pos_prop <- pos/max(pos, na.rm = TRUE)
+  #pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
   
   idx <- (case_prop + death_prop + hosp_prop + pos_prop)/4 
   idx
@@ -33,9 +33,8 @@ ri_covid_data <- select(ri_doh_data, date = Date,
                         cases_7day_per100k = 
                           'Total new cases per 100,000 persons in the past 7 days',
                         ) %>%
-  mutate(positivity = (cases/tests) * 100, 
-         risk_index = jwh_covid_risk_index(cases, deaths, hospitalization, 
-                                           positivity) * 100,
+  mutate(#positivity = (cases/tests) * 100, 
+         risk_index = jwh_covid_risk_index(cases, deaths, hospitalization) * 100,
          risk_index = risk_index/max(risk_index, na.rm = TRUE) * 100,
          cases_7day_per100k = unlist(cases_7day_per100k),
          seven_day_avg_cases = zoo::rollapply(.data$cases, 7, mean, 
@@ -48,12 +47,12 @@ ri_covid_data <- select(ri_doh_data, date = Date,
                           align = "right"),
          seven_day_avg_index = 
            zoo::rollapply(.data$risk_index, 7, mean, fill = "right", 
-                          align = "right"),
-         seven_day_avg_positivity = 
-           zoo::rollapply(.data$positivity, 7, mean, fill = "right", 
                           align = "right")) %>%
+         #seven_day_avg_positivity = 
+        #   zoo::rollapply(.data$positivity, 7, mean, fill = "right", 
+        #                  align = "right")) %>%
   #select(date, cases, deaths, positivity, starts_with("seven")) %>%
-  pivot_longer(cols = cases:seven_day_avg_positivity, 
+  pivot_longer(cols = cases:seven_day_avg_index, 
                names_to = "variable",
                values_to = "value") 
 
@@ -61,11 +60,11 @@ variable_lab <- c("cases" = "Daily Cases",
                   "seven_day_avg_cases" = "7-Day Avg. Cases", 
                   "seven_day_avg_deaths" = "7-Day Avg. Deaths",
                   "seven_day_avg_hospitalization" = "7-day Avg. Hospitalizations",
-                  "seven_day_avg_index" = "7-day Avg. Risk Index",
-                  "seven_day_avg_positivity" = "7-day Avg. Positivity")
+                  "seven_day_avg_index" = "7-day Avg. Risk Index")
+                  #"seven_day_avg_positivity" = "7-day Avg. Positivity")
 
 ri_daily <- ri_covid_data %>%
-  filter(variable %in% c("cases", "deaths", "hospitalization", "positivity", 
+  filter(variable %in% c("cases", "deaths", "hospitalization",
                          "risk_index")) %>%
   mutate(variable = case_when(variable == "risk_index" ~
                                 "seven_day_avg_index",
@@ -73,8 +72,8 @@ ri_daily <- ri_covid_data %>%
                                 "seven_day_avg_cases",
                               variable == "deaths" ~
                                 "seven_day_avg_deaths",
-                              variable == "positivity" ~
-                                "seven_day_avg_positivity",
+                              #variable == "positivity" ~
+                              #  "seven_day_avg_positivity",
                               variable == "hospitalization" ~
                                 "seven_day_avg_hospitalization"
                               ))
@@ -94,7 +93,7 @@ index_7day <- filter(ri_covid_data, date >= max(lubridate::ymd(ri_covid_data$dat
 
 
 ri_plots <- ri_covid_data |>
-  filter(variable %in% c("seven_day_avg_cases", "seven_day_avg_deaths", "seven_day_avg_positivity",
+  filter(variable %in% c("seven_day_avg_cases", "seven_day_avg_deaths", 
                          "seven_day_avg_hospitalization", "seven_day_avg_index")) |>
   ggplot(aes(x = date, y = value)) +
   geom_point(data = ri_daily, aes(x = date, y = value), size = 1, color = "grey70") +
