@@ -15,7 +15,7 @@ jwh_covid_risk_index <- function(cases, deaths, hosp){
   #pos_prop <- pos/max(pos, na.rm = TRUE)
   #pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
   
-  idx <- (case_prop + death_prop + hosp_prop + pos_prop)/4 
+  idx <- (case_prop + death_prop + hosp_prop)/3 
   idx
 }
 
