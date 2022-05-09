@@ -56,7 +56,8 @@ ri_covid_data <- select(ri_doh_data, date = Date,
                names_to = "variable",
                values_to = "value") 
 
-variable_lab <- c("cases" = "Daily Cases",
+variable_lab <- c("cases_7day_per100k" = "7-Day Cases per 100k",
+                  "cases" = "Daily Cases",
                   "seven_day_avg_cases" = "7-Day Avg. Cases", 
                   "seven_day_avg_deaths" = "7-Day Avg. Deaths",
                   "seven_day_avg_hospitalization" = "7-day Avg. Hospitalizations",
@@ -76,7 +77,8 @@ ri_daily <- ri_covid_data %>%
                               #  "seven_day_avg_positivity",
                               variable == "hospitalization" ~
                                 "seven_day_avg_hospitalization"
-                              ))
+                              )) %>%
+  mutate(value = round(value, 2))
 
 cases_7day_per100k <- filter(ri_covid_data, date == max(date), 
                              variable == "cases_7day_per100k") %>% 
@@ -93,7 +95,8 @@ index_7day <- filter(ri_covid_data, date >= max(lubridate::ymd(ri_covid_data$dat
 
 
 ri_plots <- ri_covid_data |>
-  filter(variable %in% c("seven_day_avg_cases", "seven_day_avg_deaths", 
+  mutate(value = round(value, 2)) %>%
+  filter(variable %in% c("cases_7day_per100k", "seven_day_avg_cases", "seven_day_avg_deaths", 
                          "seven_day_avg_hospitalization", "seven_day_avg_index")) |>
   ggplot(aes(x = date, y = value)) +
   geom_point(data = ri_daily, aes(x = date, y = value), size = 1, color = "grey70") +
