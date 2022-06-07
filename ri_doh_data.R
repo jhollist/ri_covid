@@ -7,11 +7,11 @@ library(plotly)
 
 jwh_covid_risk_index <- function(cases, deaths, hosp){
   case_prop <- cases/quantile(cases, 0.75, na.rm = TRUE)
-  case_prop <- case_prop/max(case_prop,na.rm = TRUE)
+  #case_prop <- case_prop/max(case_prop,na.rm = TRUE)
   death_prop <- deaths/quantile(deaths, 0.75, na.rm = TRUE)
-  death_prop <- death_prop/max(death_prop, na.rm = TRUE)
+  #death_prop <- death_prop/max(death_prop, na.rm = TRUE)
   hosp_prop <- hosp/quantile(hosp, 0.75, na.rm = TRUE)
-  hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
+  #hosp_prop <- hosp_prop/max(hosp_prop, na.rm = TRUE)
   #pos_prop <- pos/max(pos, na.rm = TRUE)
   #pos_prop <- pos_prop/max(pos_prop, na.rm = TRUE)
   
