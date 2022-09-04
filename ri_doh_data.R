@@ -25,13 +25,13 @@ gs4_deauth()
 ri_doh_data <- read_sheet("https://docs.google.com/spreadsheets/d/1c2QrNMz8pIbYEKzMJL7Uh2dtThOJa2j1sSMwiDo5Gz4", "Trends", na = c("", "NA", "--"))
 
 ri_covid_data <- select(ri_doh_data, date = Date, 
-                        cases = 'New cases (may count people more than once)', 
-                        tests = 'Daily total tests completed (may count people more than once)',
-                        deaths = 'Date of death',
-                        hospitalized = 'Currently hospitalized',
-                        hospitalization = 'New hospital admissions',
+                        cases = 'New cases reported, including non-residents (may count people more than once)', 
+                        #tests = 'Daily total tests completed (may count people more than once)',
+                        deaths = 'Number of fatalities among Rhode Island residents \n(date of death)',
+                        hospitalized = 'Number of people currently hospitalized',
+                        hospitalization = 'Number of hospital admissions',
                         cases_7day_per100k = 
-                          'Total new cases per 100,000 persons in the past 7 days',
+                          'Total new Rhode Island resident cases per 100,000 population in the past 7 days',
                         ) %>%
   mutate(#positivity = (cases/tests) * 100, 
          risk_index = jwh_covid_risk_index(cases, deaths, hospitalization) * 100,
