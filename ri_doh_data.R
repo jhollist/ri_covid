@@ -4,6 +4,7 @@ library(ggplot2)
 library(tidyr)
 library(hrbrthemes)
 library(plotly)
+library(lubridate)
 
 jwh_covid_risk_index <- function(cases, deaths, hosp){
   case_prop <- cases/max(cases, na.rm = TRUE)
@@ -37,7 +38,8 @@ ri_covid_data <- select(ri_doh_data, date = Date,
          risk_index = jwh_covid_risk_index(cases, deaths, hospitalization) * 100,
          risk_index = risk_index/max(risk_index, na.rm = TRUE) * 100,
          cases_7day_per100k = unlist(cases_7day_per100k),
-         seven_day_avg_cases = zoo::rollapply(.data$cases, 7, mean, 
+         seven_day_avg_cases = zoo::rollapply(.data$cases, 7, 
+                                              function(x) mean(x, na.rm = T), 
                                               fill = "right", align = "right"),
          seven_day_avg_deaths = 
            zoo::rollapply(.data$deaths, 7, mean, fill = "right", 
@@ -54,7 +56,8 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   #select(date, cases, deaths, positivity, starts_with("seven")) %>%
   pivot_longer(cols = cases:seven_day_avg_index, 
                names_to = "variable",
-               values_to = "value") 
+               values_to = "value") %>%
+filter(date >= today() - 270)  
 
 variable_lab <- c("cases_7day_per100k" = "7-Day Cases per 100k",
                   "cases" = "Daily Cases",
@@ -100,7 +103,7 @@ ri_plots <- ri_covid_data |>
                          "seven_day_avg_hospitalization", "seven_day_avg_index")) |>
   ggplot(aes(x = date, y = value)) +
   geom_point(data = ri_daily, aes(x = date, y = value), size = 1, color = "grey70") +
-  geom_line(size = 1, aes(color = variable)) +
+  geom_line(linewidth = 1, aes(color = variable)) +
   facet_grid(variable ~ ., scales = "free", 
              labeller = labeller(variable = variable_lab)) +
   labs(x = "Date", y = "", title = paste0("Rhode Island COVID-19 (as of: ", 
