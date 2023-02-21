@@ -1,0 +1,13 @@
+name: testit
+title: testit
+username: Jeffrey
+account: Jeffrey
+server: rstudio-connect.dmap-stage.aws.epa.gov
+hostUrl: https://rstudio-connect.dmap-stage.aws.epa.gov/__api__
+appId: 95
+bundleId: 362
+url: https://rstudio-connect.dmap-stage.aws.epa.gov/content/29c65949-1d6d-4c0d-8c8c-7f18690e2ae6/
+when: 1676646052.33022
+lastSyncTime: 1676646052.33024
+asMultiple: FALSE
+asStatic: FALSE
