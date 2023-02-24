@@ -57,7 +57,7 @@ ri_covid_data <- select(ri_doh_data, date = Date,
   pivot_longer(cols = cases:seven_day_avg_index, 
                names_to = "variable",
                values_to = "value") %>%
-filter(date >= today() - 210)  
+filter(date >= ymd("2022-07-01"))#today() - 730)  
 
 variable_lab <- c("cases_7day_per100k" = "7-Day Cases per 100k",
                   "cases" = "Daily Cases",
