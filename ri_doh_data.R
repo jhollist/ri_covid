@@ -129,5 +129,5 @@ htmlwidgets::saveWidget(index,
 
 system("git add -A")
 system(paste0("git commit -m '", lubridate::today(), "update.'" ))
-system("git push origin main")
+#system("git push origin main")
 index
